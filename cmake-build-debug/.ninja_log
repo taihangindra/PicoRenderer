@@ -1,3 +1,9 @@
 # ninja log v5
 1	69	7061022620267557	CMakeFiles/picorenderer.dir/main.c.obj	b5a3c6faf8fc5be5
 70	164	7061022621164817	picorenderer.exe	7158a84d9e462511
+2	72	7061036820807056	CMakeFiles/picorenderer.dir/main.c.obj	b5a3c6faf8fc5be5
+73	166	7061036821722557	picorenderer.exe	7158a84d9e462511
+1	97	7061222986710976	CMakeFiles/picorenderer.dir/main.c.obj	b5a3c6faf8fc5be5
+97	225	7061222987944918	picorenderer.exe	7158a84d9e462511
+1	208	7062001349399996	CMakeFiles/picorenderer.dir/main.c.obj	b5a3c6faf8fc5be5
+209	360	7062001350879274	picorenderer.exe	7158a84d9e462511
