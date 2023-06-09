@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include "include/picorenderer.h"
-
+#include "include/tgaimage.h"
 int main() {
-    printf("Hello, World!\n");
+    printf("%llu\n", sizeof(struct TGAHeader));
     return 0;
 }
