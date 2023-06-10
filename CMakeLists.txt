@@ -3,4 +3,4 @@ project(picorenderer C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(picorenderer main.c)
+add_executable(picorenderer main.c src/tgaimage.c)

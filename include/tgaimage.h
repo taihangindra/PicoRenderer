@@ -9,12 +9,14 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 enum Format {
     GRAYSCALE = 1,
     RGB = 3,
     RGBA = 4
 };
+
 typedef struct TGAHeader TGAHeader;
 typedef struct TGAColor TGAColor;
 typedef struct TGAImage TGAImage;
@@ -47,5 +49,12 @@ struct TGAImage {
     uint8_t *data;
 };
 
+TGAImage* tgaimage_init(int width, int height, int bpp);
+TGAImage* tgaimage_read_tga_file(char *filename);
+bool tgaimage_write_tga_file(TGAImage *tgaImage, char* filename, bool vflip, bool rle);
+TGAColor tgaimage_get_tgacolor(TGAImage *tgaImage, int x, int y);
+void tgaimage_set_tgacolor(TGAImage *tgaImage, int x, int y, TGAColor c);
+void tgaimage_flip_horizontally(TGAImage *tgaImage);
+void tgaimage_flip_vertically(TGAImage *tgaImage);
 
 #endif //PICORENDERER_TGAIMAGE_H
