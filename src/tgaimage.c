@@ -35,7 +35,7 @@ TGAImage* tgaimage_read_tga_file(char *filename) {
         return ti;
     }
 
-    FILE *fp = fopen(filename, "rb+");
+    FILE *fp = fopen(filename, "rw+");
     if(fp == NULL) {
         printf("can't open file: %s\n", filename);
         goto error1;
@@ -80,6 +80,9 @@ TGAImage* tgaimage_read_tga_file(char *filename) {
         tgaimage_flip_vertically(ti);
     if (header.imagedescriptor & 0x10)
         tgaimage_flip_horizontally(ti);
+
+    success:
+    fclose(fp);
     return ti;
 
     error2:
@@ -97,8 +100,11 @@ bool tgaimage_write_tga_file(TGAImage *tgaImage, char* filename, bool vflip, boo
     FILE *fp = fopen(filename, "wb+");
     if(fp == NULL) {
         printf("can't open file : %s\n", filename);
+        fclose(fp);
+        return fp;
     }
     TGAHeader header;
+    memset(&header, 0, sizeof(TGAHeader));
     header.bitsperpixel = tgaImage -> bpp << 3;
     header.width  = tgaImage -> width;
     header.height = tgaImage -> height;
@@ -106,29 +112,36 @@ bool tgaimage_write_tga_file(TGAImage *tgaImage, char* filename, bool vflip, boo
     header.imagedescriptor = vflip ? 0x00 : 0x20; // top-left or bottom-left origin
     if (fwrite(&header, sizeof(header), 1, fp) == 0) {
         printf("can't dump the tga file\n");
+        fclose(fp);
         return false;
     }
     if (!rle) {
         if (fwrite(tgaImage -> data, 1, tgaImage -> width * tgaImage -> height * tgaImage -> bpp, fp) == 0) {
             printf("can't unload rle data\n");
+            fclose(fp);
             return false;
         }
     } else if (!tgaimage_unload_rle_data(tgaImage, fp)) {
         printf("can't unload rle data\n");
+        fclose(fp);
         return false;
     }
     if (fwrite(&developer_area_ref, sizeof(developer_area_ref), 1, fp) == 0) {
         printf("can't dump the tga file\n");
+        fclose(fp);
         return false;
     }
     if (fwrite(&developer_area_ref, sizeof(developer_area_ref), 1, fp) == 0) {
         printf("can't dump the tga file\n");
+        fclose(fp);
         return false;
     }
     if (fwrite(&footer, sizeof(footer), 1, fp) == 0) {
         printf("can't dump the tga file\n");
+        fclose(fp);
         return false;
     }
+    fclose(fp);
     return true;
 }
 
@@ -194,12 +207,12 @@ static bool tgaimage_load_rle_data(TGAImage *tgaImage, FILE *fp) {
         if (chunkheader < 128) {
             chunkheader++;
             for (int i = 0; i < chunkheader; i++) {
-                if (fread(&colorbuffer.bgra, tgaImage -> bpp, 1, fp) == 0) {
+                if (fread(&colorbuffer.bgra, 1, tgaImage -> bpp, fp) == 0) {
                     printf("an error occured while reading the header\n");
                     return false;
                 }
-            for (int t = 0; t < tgaImage -> bpp; t++)
-                tgaImage -> data[currentbyte++] = colorbuffer.bgra[t];
+                for (int t = 0; t < tgaImage -> bpp; t++)
+                    tgaImage -> data[currentbyte++] = colorbuffer.bgra[t];
                 currentpixel++;
                 if (currentpixel > pixelcount) {
                     printf("too many pixels read\n");
@@ -208,7 +221,7 @@ static bool tgaimage_load_rle_data(TGAImage *tgaImage, FILE *fp) {
             }
         } else {
             chunkheader -= 127;
-            if (fread(&colorbuffer.bgra, tgaImage -> bpp, 1, fp) == 0) {
+            if (fread(&colorbuffer.bgra, 1, tgaImage -> bpp, fp) == 0) {
                 printf("an error occured while reading the header\n");
                 return false;
             }
