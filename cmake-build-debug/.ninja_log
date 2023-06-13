@@ -42,3 +42,10 @@
 66	157	7081521174060294	picorenderer.exe	5c936f56ff299171
 2	72	7081521332858524	CMakeFiles/picorenderer.dir/main.c.obj	b5a3c6faf8fc5be5
 73	164	7081521333743702	picorenderer.exe	5c936f56ff299171
+1	188	7083454827323927	CMakeFiles/picorenderer.dir/main.c.obj	b5a3c6faf8fc5be5
+188	343	7083454828845225	picorenderer.exe	5c936f56ff299171
+7	82	7083488265030639	CMakeFiles/picorenderer.dir/main.c.obj	b5a3c6faf8fc5be5
+1	95	7083488265160641	CMakeFiles/picorenderer.dir/src/tgaimage.c.obj	4e7339be1f96aade
+95	189	7083488266066826	picorenderer.exe	5c936f56ff299171
+2	68	7083488790035331	CMakeFiles/picorenderer.dir/main.c.obj	b5a3c6faf8fc5be5
+69	157	7083488790890291	picorenderer.exe	5c936f56ff299171
