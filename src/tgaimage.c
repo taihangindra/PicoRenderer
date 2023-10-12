@@ -161,36 +161,38 @@ void tgaimage_set_tgacolor(TGAImage *tgaImage, int x, int y, TGAColor c) {
     memcpy(tgaImage -> data + (x + y * tgaImage -> width) * tgaImage -> bpp, c.bgra, tgaImage -> bpp);
 }
 
-void tgaimage_flip_horizontally(TGAImage *tgaImage) {
-    if(tgaImage == NULL) return;
-    int w = tgaImage -> width, h = tgaImage -> height, bpp = tgaImage -> bpp;
-    int half = w >> 1, tmp;
-    uint8_t *data = tgaImage -> data;
+bool tgaimage_flip_horizontally(TGAImage *tgaImage) {
+    if(tgaImage == NULL) return false;
+    int width = tgaImage -> width, height = tgaImage -> height, bpp = tgaImage -> bpp;
+    int half = width >> 1;
     for (int i = 0; i < half; i++) {
-        for (int j = 0; j < h; j++) {
-            for (int b = 0; b < bpp; b++) {
-                tmp = data[(i + j * w) * bpp + b];
-                data[(i + j * w) * bpp + b] = data[(w - 1 - i + j * w) * bpp + b];
-                data[(w - 1 - i + j * w) * bpp + b] = tmp;
-            }
+        for (int j=0; j < height; j++) {
+            TGAColor c1 = tgaimage_get_tgacolor(tgaImage, i, j);
+            TGAColor c2 = tgaimage_get_tgacolor(tgaImage, width - 1 - i, j);
+            tgaimage_set_tgacolor(tgaImage, i, j, c2);
+            tgaimage_set_tgacolor(tgaImage, width - 1 - i, j, c1);
         }
     }
+    return true;
 }
 
-void tgaimage_flip_vertically(TGAImage *tgaImage) {
-    if(tgaImage == NULL) return;
-    int w = tgaImage -> width, h = tgaImage -> height, bpp = tgaImage -> bpp;
-    int half = w >> 1, tmp;
+bool tgaimage_flip_vertically(TGAImage *tgaImage) {
+    if(tgaImage == NULL) return false;
+    int width = tgaImage -> width, height = tgaImage -> height, bytespp = tgaImage -> bpp;
     uint8_t *data = tgaImage -> data;
-    for (int i = 0; i < half; i++) {
-        for (int j = 0; j < h; j++) {
-            for (int b = 0; b < bpp; b++) {
-                tmp = data[(i + j * w) * bpp + b];
-                data[(i + j * w) * bpp + b] = data[(i + (h - 1 - j) * w) * bpp + b];
-                data[(i + (h - 1 - j) * w) * bpp + b] = tmp;
-            }
-        }
+    unsigned long bytes_per_line = width * bytespp;
+    unsigned char *line = malloc(bytes_per_line);
+    if (line == NULL) return false;
+    int half = height >> 1;
+    for (int j = 0; j < half; j++) {
+        unsigned long l1 = j * bytes_per_line;
+        unsigned long l2 = (height - 1 - j) * bytes_per_line;
+        memmove((void *)line,      (void *)(data + l1), bytes_per_line);
+        memmove((void *)(data + l1), (void *)(data + l2), bytes_per_line);
+        memmove((void *)(data + l2), (void *)line,      bytes_per_line);
     }
+    free(line);
+    return true;
 }
 
 static bool tgaimage_load_rle_data(TGAImage *tgaImage, FILE *fp) {
